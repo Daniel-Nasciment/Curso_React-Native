@@ -1,15 +1,32 @@
 import React, {Component} from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Button} from 'react-native';
 
 class App extends Component {
 
+  constructor(props){
+    super(props);
+    this.state = {
+      nome: ''
+    }
+    this.entrar = this.entrar.bind(this);
+  }
+
+  entrar(nome) {
+    this.setState({
+      nome: nome
+    })
+  }
+
   render(){
+
     return(
       <View>
+
+      <Button title={"Entrar"} onPress={() => this.entrar('Daniel Nascimento')}/>
+
         <Text>
-          Olá Mundo!
+          {this.state.nome}
         </Text>
-        <Jobs largura={500} altura={200} nome={"Steve Jobs"}/>
       </View>
     );
   }
@@ -17,20 +34,3 @@ class App extends Component {
 }
 
 export default App;
-class Jobs extends Component {
-  render() {
-
-    let img = 'https://sujeitoprogramador.com/steve.png';
-
-    return(
-      <View>
-        <Image 
-        source={{uri: img}}
-        style={{width: this.props.largura, height: this.props.altura}}
-        />
-
-        <Text>{this.props.nome}</Text>
-      </View>
-    );
-  }
-}
