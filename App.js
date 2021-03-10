@@ -6,50 +6,75 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      frase: '',
-      img: require('./src/biscoito.png')
-    };
+      ultTemp: null,
+      numero: 0,
+      botao: 'INICIAR'
+    }
+    
+    //Variável do timmer
+    this.timmer = null;
+    
+    this.vai = this.vai.bind(this);
+    this.zerou = this.zerou.bind(this);
+  }
 
-   this.quebrarBiscoito = this.quebrarBiscoito.bind(this);
+  vai(){
 
-    this.frases = [
-      "Essa é a frase 1.",
-      "Essa é a frase 2.",
-      "Essa é a frase 3.",
-      "Essa é a frase 4.",
-      "Essa é a frase 5.",
-      "Essa é a frase 6."
-    ];
+    if(this.timmer != null) {
+      //Aqui vai parar o timmer 
+      clearInterval(this.timmer);
+      this.timmer = null;
+      this.setState({
+        botao: "INICIAR"
+      })
+    }else {
+      this.timmer = setInterval(() => {
+        this.setState({
+          numero: this.state.numero + 0.1,
+          botao: "PAUSAR"
+        })
+      }, 100);
+    }
 
   }
 
-  quebrarBiscoito(){
+  zerou(){
+    if(this.timmer !=null || this.timmer == null){
+      clearInterval(this.timmer);
+      this.timmer = null;
+      this.setState({
+        ultTemp: this.state.numero > 0 ? 'Último tempo: ' + this.state.numero.toFixed(1) : '',
+        numero: 0,
+        botao: 'INICIAR'
+      })
+    }
+  }
   
-    let numAleatorio = Math.floor(Math.random() * this.frases.length);
-
-    this.setState({
-      frase: this.frases[numAleatorio],
-      img: require('./src/biscoitoAberto.png')
-    })
-}
-
   render(){
 
     return(
       <View style={styles.container}>
         <Image 
-        source={this.state.img}
-        style={styles.img}
+        source = {require('./src/relogio.png')}
         />
 
-      <Text style={styles.frase}>{this.state.frase}</Text>
+      <Text style={styles.timer}>{this.state.numero.toFixed(2)}</Text>
 
-      <TouchableOpacity style={styles.btn} onPress={this.quebrarBiscoito}> 
-        <View style={styles.btnArea}>
-          <Text style={styles.btnTxt}>Quebrar Biscoito</Text>
-        </View>
-      </TouchableOpacity>
-    
+      <View style={styles.btnArea}>
+        
+        <TouchableOpacity style={styles.btn} onPress={this.vai}>
+          <Text style={styles.btnTexto}>{this.state.botao}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btn} onPress={this.zerou}>
+          <Text style={styles.btnTexto}>ZERAR</Text>
+        </TouchableOpacity>
+
+      </View>
+
+      <View>
+        <Text style={styles.btnTexto}>{this.state.ultTemp}</Text>
+      </View>
 
       </View>
     );
@@ -63,35 +88,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  frase: {
-    textAlign: 'center',
-    color: '#dd7b22',
-    margin: 30,
-    textAlign: 'center',
-    fontSize: 20,
-    fontStyle: 'italic'
-  },
-  img: {
-    width: 250,
-    height: 250
-  },
-  btn: {
-    width: 230,
-    height: 50,
-    borderWidth: 2,
-    borderColor: '#dd7b22',
-    borderRadius: 25
+  timer: {
+    margin: 10,
+    fontSize: 65,
+    fontWeight: 'bold'
   },
   btnArea: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
+    marginTop: 10 
   },
-  btnTxt: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#dd7b22'
+  btn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#222',
+    borderRadius: 3,
+    margin: 5,
+    height: 40,
+    backgroundColor: '#00aeef'
+  },
+  btnTexto: {
+    fontStyle: 'italic',
+    fontWeight: 'bold'
   }
 });
 
