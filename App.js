@@ -1,46 +1,55 @@
 import React, {Component} from 'react';
-import {View, Text, TextInput, StyleSheet, Button} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
 class App extends Component {
 
   constructor(props){
     super(props);
     this.state = {
-      nome: '',
-      input: ''
+      frase: '',
+      img: require('./src/biscoito.png')
     };
-    
-    this.entrar = this.entrar.bind(this);
+
+   this.quebrarBiscoito = this.quebrarBiscoito.bind(this);
+
+    this.frases = [
+      "Essa é a frase 1.",
+      "Essa é a frase 2.",
+      "Essa é a frase 3.",
+      "Essa é a frase 4.",
+      "Essa é a frase 5.",
+      "Essa é a frase 6."
+    ];
+
   }
 
+  quebrarBiscoito(){
   
+    let numAleatorio = Math.floor(Math.random() * this.frases.length);
 
-  entrar() {
-    if(this.state.input.length > 0){
-      this.setState({nome: 'Bem vindo, ' + this.state.input})
-    }else {
-      alert("Digite seu nome!")
-      this.setState({nome: ''})
-    }
-  }
+    this.setState({
+      frase: this.frases[numAleatorio],
+      img: require('./src/biscoitoAberto.png')
+    })
+}
 
   render(){
 
     return(
       <View style={styles.container}>
-        <TextInput 
-        style={styles.input}
-        placeholder={"Digite seu nome: "}
-        onChangeText={ (texto) => this.setState({input: texto}) }
+        <Image 
+        source={this.state.img}
+        style={styles.img}
         />
 
-        <Button 
-        title={"Entrar"}
-        onPress={this.entrar}
+      <Text style={styles.frase}>{this.state.frase}</Text>
 
-        />
-
-      <Text style={styles.frase}>{this.state.nome}</Text>
+      <TouchableOpacity style={styles.btn} onPress={this.quebrarBiscoito}> 
+        <View style={styles.btnArea}>
+          <Text style={styles.btnTxt}>Quebrar Biscoito</Text>
+        </View>
+      </TouchableOpacity>
+    
 
       </View>
     );
@@ -50,19 +59,39 @@ class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-  },
-  input: {
-    height: 45,
-    borderWidth: 1,
-    borderColor: '#222',
-    margin: 10,
-    fontSize: 20,
-    padding: 10
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   frase: {
     textAlign: 'center',
-    fontSize: 20
+    color: '#dd7b22',
+    margin: 30,
+    textAlign: 'center',
+    fontSize: 20,
+    fontStyle: 'italic'
+  },
+  img: {
+    width: 250,
+    height: 250
+  },
+  btn: {
+    width: 230,
+    height: 50,
+    borderWidth: 2,
+    borderColor: '#dd7b22',
+    borderRadius: 25
+  },
+  btnArea: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  btnTxt: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#dd7b22'
   }
 });
 
