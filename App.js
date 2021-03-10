@@ -1,20 +1,27 @@
 import React, {Component} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Button} from 'react-native';
 
 class App extends Component {
 
   constructor(props){
     super(props);
     this.state = {
-      nome: ''
+      nome: '',
+      input: ''
     };
-    this.pegarNome = this.pegarNome.bind(this);
+    
+    this.entrar = this.entrar.bind(this);
   }
 
-  pegarNome(texto) {
-    this.setState({
-      nome: texto
-    })
+  
+
+  entrar() {
+    if(this.state.input.length > 0){
+      this.setState({nome: 'Bem vindo, ' + this.state.input})
+    }else {
+      alert("Digite seu nome!")
+      this.setState({nome: ''})
+    }
   }
 
   render(){
@@ -24,10 +31,16 @@ class App extends Component {
         <TextInput 
         style={styles.input}
         placeholder={"Digite seu nome: "}
-        onChangeText={this.pegarNome}
+        onChangeText={ (texto) => this.setState({input: texto}) }
         />
 
-      <Text style={styles.frase}>Bem Vindo, {this.state.nome}!</Text>
+        <Button 
+        title={"Entrar"}
+        onPress={this.entrar}
+
+        />
+
+      <Text style={styles.frase}>{this.state.nome}</Text>
 
       </View>
     );
