@@ -1,68 +1,186 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Image, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 
-import {Picker} from '@react-native-picker/picker';
 class App extends Component {
-
-  constructor(props){
+  
+  constructor(props) {
     super(props);
     this.state = {
-    pizza: 0,
-    pizzas: [
-      {key: 1, nome: 'Strogonoff', valor: 35.90},
-      {key: 2, nome: 'Queijo', valor: 32.90},
-      {key: 3, nome: 'Calabresa', valor: 38.90},
-      {key: 4, nome: 'Frango', valor: 39.90}
-    ] 
+      txtCli: '',
+      txtSab: '',
+      txtTam: '',
+      txtQtd: '',
+      pedidos: [
+        {key: 0, cliente: 'Daniel Nascimento', sabor: 'Strogonoff', tamanho: 'grande', quantidade: '1'}
+      ]
+    }
+
+    this.inserirRegistro = this.inserirRegistro.bind(this);
+
   }
+
+  renderItem(obj){
+    return(
+      <View>
+        <Text style={styles.txtCli}>Cliente: {obj.item.cliente}</Text>
+        <Text style={styles.txtPizza}>{obj.item.quantidade} - Pizza de {obj.item.sabor}/{obj.item.tamanho}</Text>
+      </View>
+    );
   }
+
+  inserirRegistro(){
+    let newReg = {
+      key: this.state.pedidos.toString(),
+      cliente: this.state.txtCli,
+      sabor: this.state.txtSab ,
+      tamanho: this.state.txtTam,
+      quantidade: this.state.txtQtd
+    }
+
+    let pedidos = this.state.pedidos;
+    pedidos.push(newReg);
+    this.setState({pedidos});
+
+    this.setState({txtCli: ''});
+    this.setState({txtSab: ''});
+    this.setState({txtTam: ''});
+    this.setState({txtQtd: ''});
+  
+  }
+
 
   render(){
 
-    let pizzasItem = this.state.pizzas.map((v, k) => {
-      return <Picker.Item key={k} value={k} label={v.nome}/>
-    })
-
     return(
+      
       <View style={styles.container}>
-        <Text style={styles.logo}>Menu Pizza</Text>
+        <View style={styles.logo}>
+          <Image style={{width: 500, height:200}} source={require ('./src/pizza.jpg')} />
+        </View>
+        <ScrollView>
+        <View style={styles.form}>
+
+          <View style={styles.boxCampos}> 
+            <Text style={styles.formTxt}>Cliente:</Text>
+            <Text style={styles.formTxt}>Sabor:</Text>
+            <Text style={styles.formTxt}>Tamanho:</Text>
+            <Text style={styles.formTxt}>Quantidade:</Text>               
+          </View>
+
+          <View style={styles.boxCampos}> 
+            
+          <TextInput style={styles.inputTxt} placeholder={'Ex: Daniel Nascimento'} onChangeText={(txtCli) => {this.setState({txtCli: txtCli})}} value={this.state.txtCli} />
+          <TextInput style={styles.inputTxt} placeholder={'Ex: Strogonoff'} onChangeText={(txtSab) => {this.setState({txtSab: txtSab})}} value={this.state.txtSab} />
+          <TextInput style={styles.inputTxt} placeholder={'Ex: Broto/Grande'} onChangeText={(txtTam) => {this.setState({txtTam: txtTam})}} value={this.state.txtTam} />
+          <TextInput style={styles.inputTxt} placeholder={'Ex: 1'} onChangeText={(txtQtd) => {this.setState({txtQtd: txtQtd})}} value={this.state.txtQtd} />
+            
+          </View>
+
+        </View>
         
-        
-        <Picker 
-          selectedValue={this.state.pizza}
-          onValueChange={ (itemValue, itemIndex) => this.setState({pizza: itemValue}) }
-        >
-          {pizzasItem}
+        <View style={styles.btnArea}>
+          <TouchableOpacity onPress={this.inserirRegistro} style={styles.btnForm}>
+            <Text style={styles.btnTxt}>Registrar pedido</Text>
+          </TouchableOpacity>
+        </View>
+      
+        <Text style={styles.txtTitle}>Registros: </Text>
 
-        </Picker>
-
-        <Text style={styles.pizzas}>Você escolheu: Pizza {this.state.pizzas[this.state.pizza].nome}</Text>
-        <Text style={styles.pizzas}>RS: {this.state.pizzas[this.state.pizza].valor.toFixed(2)}</Text>
-
+        <FlatList 
+          keyExtractor={this.state.pedidos.key}
+          data={this.state.pedidos} 
+          renderItem={this.renderItem}
+          extraData={this.state}
+          style={styles.flatList}
+          />
+        </ScrollView>
       </View>
+      
     );
   }
 
 }
 
+
+
+
+
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 20
+    flex: 1
   },
   logo: {
+    height:200,
+    resizeMode: 'cover'
+  },
+  form: {
+    flexDirection: 'row',
+    alignItems: 'flex-start'
+  },
+  formTxt: {
+    fontSize: 20,
+    marginVertical: 11,
+    height: 40
+  },
+  inputTxt: {
+    borderWidth: 1,
+    height: 40,
+    marginVertical: 10,
+    width: 250,
+    fontSize: 20,
+    padding: 5
+  },
+  boxCampos: {
+    margin: 10,
+    flexDirection: 'column'
+  },
+  btnArea: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  btnForm: {
+    width: 200,
+    borderWidth: 2,
+    padding: 10,
+    borderRadius: 5
+  },
+  btnTxt: {
+    fontSize: 20,
     textAlign: 'center',
-    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  flatList: {
+    marginVertical: 5
+  },
+  txtTitle: {
+    textAlign: 'center',
+    margin: 20,
+    fontSize: 20,
     fontWeight: 'bold'
   },
-  pizzas: {
-    marginTop: 15,
-    fontSize: 25,
-    textAlign: 'center'
+  txtCli: {
+    margin: 5,
+    padding: 5,
+    borderTopWidth: 1,
+    borderColor: '#CCC',
+    fontSize: 15,
+    fontWeight: 'bold'
+  },
+  txtPizza: {
+    borderBottomWidth: 1,
+    borderColor: '#CCC',
+    marginLeft: 5,
+    marginTop: -12,
+    fontSize: 12
   }
+
 });
 
+
 export default App;
+
 
 
 
