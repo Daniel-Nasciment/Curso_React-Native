@@ -1,64 +1,15 @@
-import React, {Component} from 'react';
-import {View, StyleSheet, Text, Image, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
+import {View, StyleSheet, Text, Image, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-class App extends Component {
-  
-  constructor(props) {
-    super(props);
-    this.state = {
-      txtCli: '',
-      txtSab: '',
-      txtTam: '',
-      txtQtd: '',
-      pedidos: [
-        {key: 0, cliente: 'Daniel Nascimento', sabor: 'Strogonoff', tamanho: 'grande', quantidade: '1'}
-      ]
-    }
-
-    this.inserirRegistro = this.inserirRegistro.bind(this);
-
-  }
-
-  renderItem(obj){
-    return(
-      <View>
-        <Text style={styles.txtCli}>Cliente: {obj.item.cliente}</Text>
-        <Text style={styles.txtPizza}>{obj.item.quantidade} - Pizza de {obj.item.sabor}/{obj.item.tamanho}</Text>
-      </View>
-    );
-  }
-
-  inserirRegistro(){
-    let newReg = {
-      key: this.state.pedidos.toString(),
-      cliente: this.state.txtCli,
-      sabor: this.state.txtSab ,
-      tamanho: this.state.txtTam,
-      quantidade: this.state.txtQtd
-    }
-
-    let pedidos = this.state.pedidos;
-    pedidos.push(newReg);
-    this.setState({pedidos});
-
-    this.setState({txtCli: ''});
-    this.setState({txtSab: ''});
-    this.setState({txtTam: ''});
-    this.setState({txtQtd: ''});
-  
-  }
+const Tab = createBottomTabNavigator();
 
 
-  render(){
-
-    return(
-      
-      <View style={styles.container}>
-        <View style={styles.logo}>
-          <Image style={{width: 500, height:200}} source={require ('./src/pizza.jpg')} />
-        </View>
-        <ScrollView>
-        <View style={styles.form}>
+const Registro = (props) => {
+  return(
+    <View style={styles.container}>
+      <View style={styles.form}>
 
           <View style={styles.boxCampos}> 
             <Text style={styles.formTxt}>Cliente:</Text>
@@ -69,41 +20,117 @@ class App extends Component {
 
           <View style={styles.boxCampos}> 
             
-          <TextInput style={styles.inputTxt} placeholder={'Ex: Daniel Nascimento'} onChangeText={(txtCli) => {this.setState({txtCli: txtCli})}} value={this.state.txtCli} />
-          <TextInput style={styles.inputTxt} placeholder={'Ex: Strogonoff'} onChangeText={(txtSab) => {this.setState({txtSab: txtSab})}} value={this.state.txtSab} />
-          <TextInput style={styles.inputTxt} placeholder={'Ex: Broto/Grande'} onChangeText={(txtTam) => {this.setState({txtTam: txtTam})}} value={this.state.txtTam} />
-          <TextInput style={styles.inputTxt} placeholder={'Ex: 1'} onChangeText={(txtQtd) => {this.setState({txtQtd: txtQtd})}} value={this.state.txtQtd} />
+          <TextInput style={styles.inputTxt} placeholder={'Ex: Daniel Nascimento'} value={props.pedidoAtual.cliente} 
+          onChangeText={ (texto) => {props.atualizarInput('cliente', texto)} } />
+          
+          <TextInput style={styles.inputTxt} placeholder={'Ex: Strogonoff'} value={props.pedidoAtual.sabor} 
+          onChangeText={ (texto) => {props.atualizarInput('sabor', texto)} } />
+          
+          <TextInput style={styles.inputTxt} placeholder={'Ex: Broto/Grande'} value={props.pedidoAtual.tamanho} 
+          onChangeText={ (texto) => {props.atualizarInput('tamanho', texto)} } />
+          
+          <TextInput style={styles.inputTxt} placeholder={'Ex: 1'} value={props.pedidoAtual.quantidade} 
+          onChangeText={ (texto) => {props.atualizarInput('quantidade', texto)} } />
             
           </View>
 
         </View>
-        
+
         <View style={styles.btnArea}>
-          <TouchableOpacity onPress={this.inserirRegistro} style={styles.btnForm}>
+          <TouchableOpacity  style={styles.btnForm} onPress={props.gravar}>
             <Text style={styles.btnTxt}>Registrar pedido</Text>
           </TouchableOpacity>
         </View>
-      
-        <Text style={styles.txtTitle}>Registros: </Text>
 
-        <FlatList 
-          keyExtractor={this.state.pedidos.key}
-          data={this.state.pedidos} 
-          renderItem={this.renderItem}
-          extraData={this.state}
-          style={styles.flatList}
-          />
-        </ScrollView>
+    </View>
+  );
+}
+
+const LinhaPedido = (props) => {
+  return(
+    <View style={styles.container}>
+      <Text style={styles.txtCli}>
+        {props.item.cliente}
+      </Text>
+      <Text style={styles.txtPizza}>
+        {props.item.quantidade}un. - {props.item.sabor} {props.item.tamanho}
+      </Text>
+    </View>
+  );
+}
+
+const ListaRegistro = (props) => {
+  return(
+    <FlatList 
+    data={props.pedidos}
+    renderItem={LinhaPedido}
+    
+    />
+  );
+}
+
+
+class App extends React.Component {
+  
+ state = {
+      pedidoAtual: {
+        cliente: '',
+        sabor: '',
+        tamanho: '',
+        quantidade: 0
+      },
+      pedidos: [
+        {cliente: 'Daniel', sabor: 'Pizza de Strogonoff', tamanho: 'Grande', quantidade: '1'},
+        {cliente: 'Daniel', sabor: 'Pizza de Strogonoff', tamanho: 'Grande', quantidade: '1'}
+      ]
+    }
+  
+
+    atualizarPedido(campo, texto) {
+      const novoState = {...this.state};
+      novoState.pedidoAtual[campo] = texto;
+      this.setState(novoState);
+    }
+
+    gravarPedido() {
+      const novoState = {...this.state};
+      novoState.pedidos.push({... novoState.pedidoAtual});
+      this.setState(novoState);
+      alert('Pedido registrado!')
+    }
+
+  render(){
+
+    return(
+      
+      <View style={styles.container}>
+        
+        
+        <View style={styles.logo}>
+          <Image style={{width: 500, height:200}} source={require ('./src/pizza.jpg')} />
+        </View>
+        
+        <NavigationContainer>
+          <Tab.Navigator>
+            <Tab.Screen name="Registrar">
+              { () => {return( <Registro pedidoAtual={this.state.pedidoAtual} 
+              atualizarInput={ (campo, txt) => {this.atualizarPedido(campo, txt)} } 
+              gravar={() => {this.gravarPedido()}}  /> );} }
+            </Tab.Screen>
+            <Tab.Screen name="Pedidos">
+            { () => {return( <ListaRegistro pedidos={this.state.pedidos} />);} }
+            </Tab.Screen>
+          </Tab.Navigator>
+        </NavigationContainer>
+
+        
+        
       </View>
       
     );
   }
 
 }
-
-
-
-
 
 
 const styles = StyleSheet.create({
@@ -154,12 +181,6 @@ const styles = StyleSheet.create({
   flatList: {
     marginVertical: 5
   },
-  txtTitle: {
-    textAlign: 'center',
-    margin: 20,
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
   txtCli: {
     margin: 5,
     padding: 5,
@@ -180,7 +201,3 @@ const styles = StyleSheet.create({
 
 
 export default App;
-
-
-
-
