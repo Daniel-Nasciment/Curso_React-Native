@@ -2,6 +2,8 @@ import React from 'react';
 import {View, StyleSheet, Text, Image, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import axios from 'axios';
+import { ThemeConsumer } from 'react-native-elements';
 
 const Tab = createBottomTabNavigator();
 
@@ -79,10 +81,7 @@ class App extends React.Component {
         tamanho: '',
         quantidade: 0
       },
-      pedidos: [
-        {cliente: 'Daniel', sabor: 'Pizza de Strogonoff', tamanho: 'Grande', quantidade: '1'},
-        {cliente: 'Daniel', sabor: 'Pizza de Strogonoff', tamanho: 'Grande', quantidade: '1'}
-      ]
+      pedidos: []
     }
   
 
@@ -98,6 +97,16 @@ class App extends React.Component {
       this.setState(novoState);
       alert('Pedido registrado!')
     }
+
+    componentDidMount(){
+      axios.get('https://fecaf-pdm2-backend.herokuapp.com/pedido').then((res) => {
+        console.log(res.data);
+        const novoState = {...this.state};
+        novoState.pedidos = [...res.data];
+        this.setState(novoState);
+      })
+    }
+
 
   render(){
 
